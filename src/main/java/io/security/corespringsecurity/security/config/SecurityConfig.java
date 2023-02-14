@@ -1,5 +1,6 @@
 package io.security.corespringsecurity.security.config;
 
+import io.security.corespringsecurity.security.provider.CustomAuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -48,10 +49,17 @@ public class SecurityConfig {
     }
     */
 
-
+    //CustomAuthenticationProvider 내부에서 UserDetailsService를 사용하도록 구현해서 등록에서 제외해주었다.
+    /*
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration authConfiguration) throws Exception {
         return authConfiguration.getAuthenticationManager();
+    }
+     */
+
+    @Bean
+    public CustomAuthenticationProvider customAuthenticationProvider() {
+        return new CustomAuthenticationProvider();
     }
 
     @Bean
