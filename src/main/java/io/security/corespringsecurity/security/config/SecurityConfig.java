@@ -32,7 +32,7 @@ public class SecurityConfig {
         UserDetails manager = User.builder()
                 .username("manager")
                 .password( password )
-                .roles("MANAGER")
+                .roles("MANAGER", "USER")
                 .build();
         UserDetails admin = User.builder()
                 .username("admin")
