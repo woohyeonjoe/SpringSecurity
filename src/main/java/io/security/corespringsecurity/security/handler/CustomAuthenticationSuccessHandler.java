@@ -17,7 +17,7 @@ import java.io.IOException;
 @Component
 public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private RequestCache requestCache = new HttpSessionRequestCache();
+    private RequestCache requestCache = new HttpSessionRequestCache(); // 요청 캐시와 관련된 작업
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
@@ -31,7 +31,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             String targetUrl = saveRequest.getRedirectUrl();
             redirectStrategy.sendRedirect(request, response, targetUrl);
         } else {
-            redirectStrategy.sendRedirect(request, response, getDefaultTargetUrl());
+            redirectStrategy.sendRedirect(request, response, getDefaultTargetUrl());    // 인증 성공 후 이동
         }
     }
 }
