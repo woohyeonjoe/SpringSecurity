@@ -2,9 +2,11 @@ package io.security.corespringsecurity.security.config;
 
 import io.security.corespringsecurity.security.provider.CustomAuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -57,6 +59,9 @@ public class SecurityConfig {
     }
      */
 
+    @Autowired
+    private AuthenticationDetailsSource authenticationDetailsSource;
+
     @Bean
     public CustomAuthenticationProvider customAuthenticationProvider() {
         return new CustomAuthenticationProvider();
@@ -90,6 +95,7 @@ public class SecurityConfig {
                 .formLogin()
                 .loginPage("/login")
                 .loginProcessingUrl("/login_proc")
+                .authenticationDetailsSource(authenticationDetailsSource)   //WebAuthenticationDetails 추가
                 .defaultSuccessUrl("/")
                 .permitAll();
 
