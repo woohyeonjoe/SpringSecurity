@@ -1,5 +1,7 @@
 package io.security.corespringsecurity.security.config;
 
+import io.security.corespringsecurity.security.common.FormAuthenticationDetailsSource;
+import io.security.corespringsecurity.security.handler.CustomAccessDeniedHandler;
 import io.security.corespringsecurity.security.provider.CustomAuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -68,7 +71,7 @@ public class SecurityConfig {
     private AuthenticationFailureHandler customAuthenticationFailureHandler;
 
     @Autowired
-    private AuthenticationDetailsSource authenticationDetailsSource;
+    private FormAuthenticationDetailsSource authenticationDetailsSource;
 
     @Bean
     public CustomAuthenticationProvider customAuthenticationProvider() {
@@ -107,9 +110,22 @@ public class SecurityConfig {
                 .defaultSuccessUrl("/")
                 .successHandler(customAuthenticationSuccessHandler)
                 .failureHandler(customAuthenticationFailureHandler)
-                .permitAll();
+                .permitAll()
+
+                .and()
+                .exceptionHandling()
+                .accessDeniedHandler(accessDeniedHandler());
+
+
 
         return http.build();
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        CustomAccessDeniedHandler accessDeniedHandler = new CustomAccessDeniedHandler();
+        accessDeniedHandler.setErrorPage("/denied");
+        return accessDeniedHandler;
     }
 
 }
