@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -32,6 +33,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @Slf4j
+@Order(1)
 public class SecurityConfig {
 
     //테스트용 인메모리 유저
@@ -120,11 +122,6 @@ public class SecurityConfig {
                 .accessDeniedHandler(accessDeniedHandler());
 
 
-        http    //UsernamePasswordAuthenticationFilter 앞에서 작동하게 설정
-                .addFilterBefore(ajaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
-
-
-
         return http.build();
     }
 
@@ -135,14 +132,7 @@ public class SecurityConfig {
         return accessDeniedHandler;
     }
 
-    @Bean AuthenticationManager authenticationManager(AuthenticationConfiguration authConfiguration) throws Exception {
-        return authConfiguration.getAuthenticationManager();
-    }
 
-    @Bean
-    public AjaxLoginProcessingFilter ajaxLoginProcessingFilter() {
-        return new AjaxLoginProcessingFilter();
-    }
 
 
 
