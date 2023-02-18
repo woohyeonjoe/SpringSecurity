@@ -1,6 +1,8 @@
 package io.security.corespringsecurity.security.config;
 
+import io.security.corespringsecurity.security.common.AjaxLoginAuthenticationEntryPoint;
 import io.security.corespringsecurity.security.filter.AjaxLoginProcessingFilter;
+import io.security.corespringsecurity.security.handler.AjaxAccessDeniedHandler;
 import io.security.corespringsecurity.security.handler.AjaxAuthenticationFailureHandler;
 import io.security.corespringsecurity.security.handler.AjaxAuthenticationSuccessHandler;
 import io.security.corespringsecurity.security.provider.AjaxAuthenticationProvider;
@@ -16,6 +18,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -30,7 +33,7 @@ public class AjaxSecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        ProviderManager authenticationManager = (ProviderManager)authenticationConfiguration.getAuthenticationManager();
+        ProviderManager authenticationManager = (ProviderManager) authenticationConfiguration.getAuthenticationManager();
         authenticationManager.getProviders().add(ajaxAuthenticationProvider());
         return authenticationManager;
     }
@@ -65,15 +68,26 @@ public class AjaxSecurityConfig {
         http
                 .antMatcher("/api/**")
                 .authorizeRequests()
+                .antMatchers("/api/messages").hasRole("MANAGER")
                 .anyRequest().authenticated();
 
         http    //UsernamePasswordAuthenticationFilter 앞에서 작동하게 설정
                 .addFilterBefore(ajaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http
+                .exceptionHandling()
+                .authenticationEntryPoint(new AjaxLoginAuthenticationEntryPoint())
+                .accessDeniedHandler(ajaxAccessDeniedHandler());
+
+        http
                 .csrf().disable();
 
         return http.build();
+    }
+
+    @Bean
+    public AccessDeniedHandler ajaxAccessDeniedHandler() {
+        return new AjaxAccessDeniedHandler();
     }
 
 
